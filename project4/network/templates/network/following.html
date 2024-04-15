@@ -1,0 +1,22 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div class="grid-following">
+
+{% for profile in my_follows %}
+
+    <div class="profile-card">
+        <a href="{% url 'user_page' profile.id %}">
+            <div class="profile-picture"><img src="{{profile.profile_picture.url}}" alt="profile-picture"></div>
+            <div class="user">{{profile.username}}</div>
+            <div class="email">({{profile.email}})</div>
+            <div class="followers">{{profile.followers.count}} followers</div>
+        </a>
+    </div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

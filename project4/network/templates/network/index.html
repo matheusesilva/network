@@ -1,0 +1,74 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div class="content">
+    {% if user.is_authenticated %}
+        <button id="new-post">New Post</button>
+        <dialog>
+            <form id="form-new-post" action="{% url 'add' %}" method="POST">
+                {% csrf_token %}
+                <textarea name="content" id="post-edit-area" cols="30" rows="10" placeholder="Write your post!"></textarea>
+                <div>
+                    <button type="button" id="cancel-new-post">Cancel</button>
+                    <button type="submit" id="submit">Post</button>
+                </div>
+            </form>
+        </dialog>
+    {% endif %}
+    
+        <div class="all-posts">
+            {% for post in page_obj %}
+                <div class="post" id="{{post.id}}">
+                    <div class="post-content">{{post.content}}</div>
+                    <div class="user"><a href="{% url 'user_page' post.user.id %}">{{post.user}}</a></div>
+                    <div class="email"><a href="{% url 'user_page' post.user.id %}">({{post.user.email}})</a></div>
+                    <div class="time">{{post.date_edit_post}}</div>
+
+                    {% if user in post.likes.all %}
+                    <button id="like" class="liked">
+                        <span>{{post.likes.count}}</span>
+                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                            <g id="Layer_1">
+                            <title>Layer 1</title>
+                            <path id="svg_1" d="m9.60211,4.13346c3.9168,-11.22236 19.26297,0 0,14.42875c-19.26297,-14.42875 -3.9168,-25.6511 0,-14.42875z" />
+                            </g>
+                        </svg>
+                    </button>
+                    {% else %}
+                    <button id="like" class="not-liked">
+                        <span>{{post.likes.count}}</span>
+                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                            <g id="Layer_1">
+                             <title>Layer 1</title>
+                             <path id="svg_1" d="m9.60211,4.13346c3.9168,-11.22236 19.26297,0 0,14.42875c-19.26297,-14.42875 -3.9168,-25.6511 0,-14.42875z" />
+                            </g>
+                        </svg>
+                    </button>
+                    {% endif %}
+
+                    {% if user.is_authenticated and post.user == user %}
+                        <button id="edit" type="button">Edit</button>
+                    {% endif %}
+                    
+                </div>
+            {% endfor %}
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+                {% endif %}
+                
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a></li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">{{page_obj.next_page_number}}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+</div>
+{% endblock %}
